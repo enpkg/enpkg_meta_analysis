@@ -8,24 +8,26 @@ import textwrap
 # Loading the parameters from yaml file
 from pathlib import Path
 
-p = Path(__file__).parents[2]
-os.chdir(p)
-
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description=textwrap.dedent('''\
          This script will download a GNPS job
          --------------------------------
-            results will be stored in data/in/<job_id>/
+        Results will be stored in sample_dir_path/002_gnps/<job_id>/
         '''))
+parser.add_argument('-p', '--sample_dir_path', required=True,
+                    help='The path to the directory where samples folders coresponding to the GNPS job_id are located')
 parser.add_argument('--job_id', required=True,
                     help='the identifier of the GNPS job to download')
 args = parser.parse_args()
+sample_dir_path = os.path.normpath(args.sample_dir_path)
+os.chdir(sample_dir_path)
 
-pathout = os.path.normpath("./data/in/")
+pathout = os.path.join(os.getcwd() + "/002_gnps/")
 os.makedirs(pathout, exist_ok=True)
-path_to_folder = os.path.expanduser(os.path.join('./data/in/' + args.job_id))
-path_to_file = os.path.expanduser(os.path.join('./data/in/' + args.job_id +'.zip'))
+
+path_to_folder = os.path.expanduser(os.path.join('./002_gnps/' + args.job_id))
+path_to_file = os.path.expanduser(os.path.join('./002_gnps/' + args.job_id + '.zip'))
 
 # Downloading GNPS files
 
@@ -35,9 +37,8 @@ Fetching the GNPS job: '''
 )
 
 job_url_zip = "https://gnps.ucsd.edu/ProteoSAFe/DownloadResult?task="+args.job_id+"&view=download_cytoscape_data"
-print(job_url_zip)
 
-cmd = 'curl -d "" '+job_url_zip+' -o '+path_to_file+ ' --create-dirs'
+cmd = 'curl -d "" ' + job_url_zip + ' -o '+ path_to_file + ' --create-dirs'
 subprocess.call(shlex.split(cmd))
 
 with zipfile.ZipFile(path_to_file, 'r') as zip_ref:

@@ -20,11 +20,11 @@ parser = argparse.ArgumentParser(
          This script will download compounds from ChEMBL DB with an activity against a given target
          --------------------------------
             You should just enter the ChEMBL target ID
-            results will be stored in ../data/out/chembl/<target_id>.csv
+            results will be stored in ../chembl/<target_id>.csv
         '''))
-parser.add_argument('--target_id', required=True,
+parser.add_argument('-id', '--target_id', required=True,
                     help='The ChEMBL target ID to use to select compounds')
-parser.add_argument('--NPlike_score', default=-1, 
+parser.add_argument('-npl', '--NPlike_score', default=-1, 
                     help='The minimal NP likeliness score for compounds. Compounds with \
                         lower NP likeliness score (i.e. "less natural") will be filterd out. Default -1.')
 args = parser.parse_args()
@@ -127,7 +127,7 @@ wd_filtred = wd_all[wd_all['inchikey'].isin(list(df_clean.inchikey))]
 df_total = df_clean.merge(wd_filtred[['inchikey', 'wikidata_id']], on='inchikey', how='outer')
 df_total['wikidata_id'] = df_total['wikidata_id'] .fillna('no_wikidata_match')
 
-pathout = os.path.normpath("data/out/chembl")
+pathout = os.path.normpath("chembl/")
 os.makedirs(pathout, exist_ok=True)
-path_to_folder = os.path.expanduser(os.path.join("data/out/chembl/" + args.target_id))
+path_to_folder = os.path.expanduser(os.path.join("chembl/" + args.target_id))
 df_total.to_csv(path_to_folder)
