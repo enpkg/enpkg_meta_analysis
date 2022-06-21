@@ -1,6 +1,8 @@
 # meta_analysis
 Analyses  to enrich the Experimental Natural Products Knowledge Graph.
 
+⚙️ Workflow part of [enpkg_workflow](https://github.com/mandelbrot-project/enpkg_workflow). First data have to be organized using [data_organization](https://github.com/mandelbrot-project/data_organization), taxonomy resolved using [taxo_enhancer](https://github.com/mandelbrot-project/taxo_enhancer) and spectra annotated using [indifiles_annotation](https://github.com/mandelbrot-project/indifiles_annotation) and/or [sirius_canopus](https://github.com/mandelbrot-project/sirius_canopus). 
+
 Currently:
 - Structures metadata fetcher: retrieve the NPClassifier ontology and the WD of annotated structures.
 - MEMO: compare the chemistry of large amount of samples.
