@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser(
     description=textwrap.dedent('''\
         This script generates an SQL DB (structures_metadata.db) in the directory where samples folders are located with WD ID and NPClassfier taxonomy for annotated structures.
         '''))
-parser.add_argument('--sample_dir_path', required=True,
+parser.add_argument('-p', '--sample_dir_path', required=True,
                     help='The path to the directory where samples folders to process are located')
 parser.add_argument('--sql_path', required=True,
                     help='The path to a previsouly generated SQL DB (that will be updated with new structures). If no SQL DB is available, will create new one at the given location.')
