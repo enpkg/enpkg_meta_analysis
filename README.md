@@ -58,7 +58,7 @@ This will create 2 files in **path/to/your/data/directory/003_memo_analysis/**:
 More parameters inherent to the vectorization process are available, for help use:
 | Filename | Description |
 | :------- | :-----------|
-{output_name}_params.csv | Parameters used to generate the corresponding MEMO matrix
+{output_name}\_params.csv | Parameters used to generate the corresponding MEMO matrix
 {output_name}.gz | The MEMO matrix (with gzip compression)
 ```console
 python .\src\memo_unaligned_repo.py --help
@@ -79,4 +79,4 @@ To do so, use the following command:
 ```console
 python .\src\download_chembl.py -id {chembl_target_id} -npl {minimal_NP_like_score}
 ```
-The resulting table will be placed in ./output_data/chembl/{target_id}_np_like_min_{min_NPlike_score}.csv.
+The resulting table will be placed in ./output_data/chembl/{target_id}\_np_like_min_{min_NPlike_score}.csv.
