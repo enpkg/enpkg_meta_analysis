@@ -59,7 +59,7 @@ for sample_directory in tqdm(samples_dir):
     if metadata['sample_type'][0] == 'sample':
         treated_samples.append(sample_directory)
         for spectrum in sample_spec:
-            original_feat_id = sample_directory + '_feature_' + spectrum.metadata['scans'] 
+            original_feat_id = sample_directory + '_feature_' + spectrum.metadata['scans'] + '_' + ionization
             spectrum.set('original_feature_id', original_feat_id)
             spectrum.set('feature_id', i)
             spectrum.set('scans', i)
