@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(
         '''))
 parser.add_argument('-p', '--sample_dir_path', required=True,
                     help='The path to the directory where samples folders to process are located')
-parser.add_argument('--sql_path', required=True,
+parser.add_argument('sql', '--sql_path', required=True,
                     help='The path to a previsouly generated SQL DB (that will be updated with new structures). If no SQL DB is available, will create new one at the given location.')
 
 args = parser.parse_args()
