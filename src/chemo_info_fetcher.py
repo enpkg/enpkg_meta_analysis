@@ -17,15 +17,15 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description=textwrap.dedent('''\
         This script generates an SQL DB (structures_metadata.db) in the directory where samples folders are located with WD ID and NPClassfier taxonomy for annotated structures.
-         --------------------------------
-            Arguments:
-            - Path to the directory where samples folders are located
         '''))
 parser.add_argument('--sample_dir_path', required=True,
                     help='The path to the directory where samples folders to process are located')
+parser.add_argument('--sql_path', required=True,
+                    help='The path to a previsouly generated SQL DB (that will be updated with new structures). If no SQL DB is available, will create new one at the given location.')
 
 args = parser.parse_args()
 sample_dir_path = args.sample_dir_path
+sql_path = os.path.normpath(args.sql_path)
 
 """ Functions """
 
@@ -49,11 +49,11 @@ WHERE{
        return None
 
 
-def update_sqldb(dataframe, db_file):
+def update_sqldb(dataframe, sql_path):
     """ create a database connection to a SQLite database """
     conn = None
     try:
-        conn = sqlite3.connect(db_file)
+        conn = sqlite3.connect(sql_path)
         dataframe.to_sql('structures_metadata', con=conn, if_exists='append')
     except Error as e:
         print(e)
@@ -72,8 +72,8 @@ path = os.path.normpath(sample_dir_path)
 samples_dir = [directory for directory in os.listdir(path)]
 
 # Check if sql DB of metadata already exist and load short IK if yes
-if os.path.exists(path+'/structures_metadata.db'):
-    dat = sqlite3.connect(path+'/structures_metadata.db')
+if os.path.exists(sql_path):
+    dat = sqlite3.connect(sql_path)
     query = dat.execute("SELECT * From structures_metadata")
     cols = [column[0] for column in query.description]
     df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
@@ -85,16 +85,37 @@ else:
 # First load all unique short IK from ISDB annotation as long as their metadata (smiles 2D, NPC classes)
 metadata_short_ik = {}
 for directory in samples_dir:
-    isdb_path = os.path.join(path, directory, directory  + '_isdb_matched_pos_repond_flat.tsv')
+    isdb_path_pos = os.path.join(path, directory, 'pos', 'isdb', directory  + '_isdb_reweighted_flat_pos.tsv')
+    isdb_path_neg = os.path.join(path, directory, 'neg', 'isdb', directory  + '_isdb_reweighted_flat_neg.tsv')
+    isdb_annotations_pos = None
+    isdb_annotations_neg = None
     try:
-        isdb_annotations = pd.read_csv(isdb_path, sep='\t')\
+        isdb_annotations_pos = pd.read_csv(isdb_path_pos, sep='\t')\
             [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']]
-        print(f'loading {directory} done')
     except FileNotFoundError:
+        pass
+    try:
+        isdb_annotations_neg = pd.read_csv(isdb_path_neg, sep='\t')\
+            [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']] 
+    except FileNotFoundError:
+        pass
+        
+    if (isdb_annotations_pos is not None) & (isdb_annotations_neg is not None):
+        isdb_annotations = pd.concat([isdb_annotations_pos, isdb_annotations_neg])
+        del(isdb_annotations_pos, isdb_annotations_neg)
+    elif isdb_annotations_pos is not None:
+        isdb_annotations = isdb_annotations_pos.copy()
+        del(isdb_annotations_pos)
+    elif isdb_annotations_neg is not None:
+        isdb_annotations = isdb_annotations_neg.copy()
+        del(isdb_annotations_neg)
+    else:
         continue
-      
-    isdb_annotations.drop_duplicates(subset=['short_inchikey'], inplace=True)        
-    short_ik = list(isdb_annotations['short_inchikey'])
+    
+    print(f'Processing ISDB results for sample {directory}')
+    
+    isdb_annotations.drop_duplicates(subset=['short_inchikey'], inplace=True)
+    short_ik = list(isdb_annotations['short_inchikey'])    
     for sik in short_ik:
         if (sik not in metadata_short_ik) & (sik not in short_ik_in_db):
             row = isdb_annotations[isdb_annotations['short_inchikey'] == sik]
@@ -103,17 +124,41 @@ for directory in samples_dir:
             metadata_short_ik[sik]['npc_pathway'] = row['structure_taxonomy_npclassifier_01pathway'].values[0]
             metadata_short_ik[sik]['npc_superclass'] = row['structure_taxonomy_npclassifier_02superclass'].values[0]
             metadata_short_ik[sik]['npc_class'] = row['structure_taxonomy_npclassifier_03class'].values[0]
-
+    
 # Add unique short IK from Sirius annotations + add NPC metadata
 for directory in samples_dir:
-    sirius_path = os.path.join(path, directory, directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    sirius_path_pos = os.path.join(path, directory, 'pos',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    sirius_path_neg = os.path.join(path, directory, 'neg',  directory + '_WORKSPACE_SIRIUS', 'compound_identifications.tsv')
+    sirius_annotations_pos = None
+    sirius_annotations_neg = None
     try:
-        sirius_annotations = pd.read_csv(sirius_path, sep='\t')\
+        sirius_annotations_pos = pd.read_csv(sirius_path_pos, sep='\t')\
             [['InChIkey2D','smiles']]
-        print(f'loading {directory} done')
         print(len(metadata_short_ik))
     except FileNotFoundError:
-        continue                
+        pass
+    try:
+        sirius_annotations_neg = pd.read_csv(sirius_path_neg, sep='\t')\
+            [['InChIkey2D','smiles']]
+
+        print(len(metadata_short_ik))
+    except FileNotFoundError:
+        pass 
+        
+    if (sirius_annotations_pos is not None) & (sirius_annotations_neg is not None):
+        sirius_annotations = pd.concat([sirius_annotations_pos, sirius_annotations_neg])
+        del(sirius_annotations_pos, sirius_annotations_neg)
+    elif sirius_annotations_pos is not None:
+        sirius_annotations = sirius_annotations_pos.copy()
+        del(sirius_annotations_pos)
+    elif sirius_annotations_neg is not None:
+        sirius_annotations = sirius_annotations_neg.copy()
+        del(sirius_annotations_neg)
+    else:
+        continue
+    
+    print(f'Processing sirius results for sample {directory}')
+    
     sirius_annotations.drop_duplicates(subset=['InChIkey2D'], inplace=True)        
     short_ik = list(sirius_annotations['InChIkey2D'])
     for sik in tqdm(short_ik):
@@ -168,5 +213,5 @@ if len(df_ik_meta) > 0:
     df_total['isomeric_smiles'] = df_total['isomeric_smiles'].fillna(df_total['smiles'])
     df_total = df_total.fillna('no_wikidata_match')
                 
-    update_sqldb(df_total, path + '/structures_metadata.db')
+    update_sqldb(df_total, sql_path)
 
