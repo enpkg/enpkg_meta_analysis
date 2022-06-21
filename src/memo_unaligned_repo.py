@@ -126,12 +126,17 @@ if pattern_to_match2 is not None:
 PATH = os.path.normpath(sample_dir_path + '/003_memo_analysis/')
 if not os.path.exists(PATH):
     os.makedirs(PATH)
-print(PATH)
+
 datatable = dt.Frame(table1)
 datatable.to_csv(f"{PATH}/{args.output}.gz", compression="gzip")    
-params = pd.DataFrame.from_dict(vars(args).items())
-params.to_csv(f"{PATH}/{args.output}_params.csv")
+params = pd.DataFrame.from_dict(vars(args).items()).rename(columns={0:'parameter', 1:'value'})
+included_samples_df = df = pd.DataFrame(index=[0], columns=['parameter', 'value'])
+included_samples_df.loc[0, 'parameter'] = 'included_samples'
+included_samples_df.loc[0, 'value'] = list(table1.filename)
 
-    
+params = pd.concat([params, included_samples_df], ignore_index=True)
+params.to_csv(f"{PATH}/{args.output}_params.csv", index=False)
+
+print(f'results are in {PATH}') 
 
     
