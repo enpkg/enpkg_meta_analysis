@@ -214,4 +214,3 @@ if len(df_ik_meta) > 0:
     df_total = df_total.fillna('no_wikidata_match')
                 
     update_sqldb(df_total, sql_path)
-
