@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(
          This script will download compounds from ChEMBL DB with an activity against a given target
          --------------------------------
             You should just enter the ChEMBL target ID
-            results will be stored in ../chembl/<target_id>.csv
+            results will be stored in ../output_data/chembl/<target_id>_np_like_min_<NPlike_score>.csv
         '''))
 parser.add_argument('-id', '--target_id', required=True,
                     help='The ChEMBL target ID to use to select compounds')
@@ -101,7 +101,7 @@ WHERE{
 
 # Load variables
 from pathlib import Path
-p = Path(__file__).parents[2]
+p = Path(__file__).parents[1]
 os.chdir(p)
 
 # Download selected activities
@@ -117,7 +117,10 @@ res = res.only(['activity_comment', 'molecule_chembl_id', 'canonical_smiles', 's
             'assay_chembl_id', 'document_chembl_id'
              ])
 
+print('Fetching results from ChEMBL: this step can takes up to 30 minutes. Have a coffee ;)')
 res_df = pd.DataFrame.from_dict(res)
+print('Fetching results from ChEMBL: Done!')
+
 df_clean = clean_DB(res_df, NP_model, args.NPlike_score)
 
 wd_url = 'https://query.wikidata.org/sparql'
@@ -127,7 +130,5 @@ wd_filtred = wd_all[wd_all['inchikey'].isin(list(df_clean.inchikey))]
 df_total = df_clean.merge(wd_filtred[['inchikey', 'wikidata_id']], on='inchikey', how='outer')
 df_total['wikidata_id'] = df_total['wikidata_id'] .fillna('no_wikidata_match')
 
-pathout = os.path.normpath("chembl/")
-os.makedirs(pathout, exist_ok=True)
-path_to_folder = os.path.expanduser(os.path.join("chembl/" + args.target_id))
+path_to_folder = os.path.expanduser(os.path.join(os.getcwd() + "/output_data/chembl/" + args.target_id + '_np_like_min_' + args.NPlike_score + '.csv'))
 df_total.to_csv(path_to_folder)

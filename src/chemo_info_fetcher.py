@@ -11,21 +11,26 @@ import argparse
 import textwrap
 from pathlib import Path
 
+p = Path(__file__).parents[1]
+os.chdir(p)
+print(p)
+
 """ Argument parser """
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     description=textwrap.dedent('''\
-        This script generates an SQL DB (structures_metadata.db) in the directory where samples folders are located with WD ID and NPClassfier taxonomy for annotated structures.
+        This script generates an SQL DB (structures_metadata.db) in the /output_data/sql_db/ with WD ID and NPClassfier taxonomy for annotated structures.
         '''))
 parser.add_argument('-p', '--sample_dir_path', required=True,
                     help='The path to the directory where samples folders to process are located')
-parser.add_argument('sql', '--sql_path', required=True,
-                    help='The path to a previsouly generated SQL DB (that will be updated with new structures). If no SQL DB is available, will create new one at the given location.')
+parser.add_argument('-sql', '--sql_name', default = 'structures_metadata.db',
+                    help='The name of a previsouly generated SQL DB (that will be updated with new structures). \
+                        If no SQL DB is available, will create new one /output_data/sql_db/')
 
 args = parser.parse_args()
 sample_dir_path = args.sample_dir_path
-sql_path = os.path.normpath(args.sql_path)
+sql_path = os.path.join(os.getcwd() + '/output_data/sql_db/' + args.sql_name)
 
 """ Functions """
 
