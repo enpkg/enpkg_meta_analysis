@@ -65,9 +65,9 @@ python .\src\memo_unaligned_repo.py --help
 ```
 
 ## 3. Fetching structures' metadata
-To enrich our knowledge graph, we will fetch for dereplicated structures their Wikidata id and their [NPClassifier](https://pubs.acs.org/doi/10.1021/acs.jnatprod.1c00399) taxonomy. Because the NPClassifier API can be slow for large amount of structures, results are stored in a SQL database. You can use the same SQL DB in your different project to avoid processing multiple times the same structure. The first time you run the process, a new SQL DB will be created at the given location (path/to/your/sql/db/example_db.db).
+To enrich our knowledge graph, we will fetch for dereplicated structures their Wikidata id and their [NPClassifier](https://pubs.acs.org/doi/10.1021/acs.jnatprod.1c00399) taxonomy. Because the NPClassifier API can be slow for large amount of structures, results are stored in a SQL database. You can use the same SQL DB in your different project to avoid processing multiple times the same structure. The first time you run the process, a new SQL DB will be created at the default location (./output_data/sql_db/{sql_name.db}).
 ### Worflow
 To do so, use the following command:
 ```console
-python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ -sql path/to/your/sql/db/ 
+python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db
 ```
