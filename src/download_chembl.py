@@ -132,4 +132,4 @@ df_total['wikidata_id'] = df_total['wikidata_id'] .fillna('no_wikidata_match')
 
 path_to_folder = os.path.expanduser(os.path.join(os.getcwd() + "/output_data/chembl/" + args.target_id + '_np_like_min_' + args.NPlike_score + '.csv'))
 df_total.to_csv(path_to_folder)
-print(f'Done. Results are in: {path_to_folder}')
+print(f'Finished. Results are in: {path_to_folder}')
