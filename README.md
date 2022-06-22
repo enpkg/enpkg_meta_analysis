@@ -44,7 +44,7 @@ When the job is finished, download the result using the following command:
 ```console
 python .\src\gnps_fetcher.py -p path/to/your/data/directory/ --job_id {gnps_job_id}
 ```
-The GNPS output will be dowloaded in **path/to/your/data/directory/002_gnps/**!
+The GNPS output will be dowloaded in **path/to/your/data/directory/002_gnps/{gnps_job_id}/**
 
 ## 2. MEMO analysis
 Using individual fragmentation spectra files, it is possible to generate for each sample a MS2-based fingerprint, or [MEMO](https://github.com/mandelbrot-project/memo) vector. This allows to rapidly compare large amount of chemo-diverse samples to identify potential similarities in composition among them. Here, the aligned MEMO matrix of all samples' fingerprints will be generated.
@@ -60,12 +60,15 @@ More parameters inherent to the vectorization process are available, for help us
 | :------- | :-----------|
 {output_name}\_params.csv | Parameters used to generate the corresponding MEMO matrix
 {output_name}.gz | The MEMO matrix (with gzip compression)
+
+Fo help about the MEMO vectorization parameters, use:
+
 ```console
 python .\src\memo_unaligned_repo.py --help
 ```
 
 ## 3. Fetching structures' metadata
-To enrich our knowledge graph, we will fetch for dereplicated structures their Wikidata id and their [NPClassifier](https://pubs.acs.org/doi/10.1021/acs.jnatprod.1c00399) taxonomy. Because the NPClassifier API can be slow for large amount of structures, results are stored in a SQL database. You can use the same SQL DB in your different project to avoid processing multiple times the same structure. The first time you run the process, a new SQL DB will be created at the default location (./output_data/sql_db/{sql_name.db}).
+To enrich our knowledge graph, we will fetch for dereplicated structures their Wikidata id and their [NPClassifier](https://pubs.acs.org/doi/10.1021/acs.jnatprod.1c00399) taxonomy. Because the NPClassifier API can be slow for large amount of structures, results are stored in a SQL database. You can use the same SQL DB in your different project to avoid processing multiple times the same structure. The first time you run the process, a new SQL DB will be created at the default location (**./output_data/sql_db/{sql_name.db}**).
 ### Worflow
 To do so, use the following command:
 ```console
@@ -79,4 +82,4 @@ To do so, use the following command:
 ```console
 python .\src\download_chembl.py -id {chembl_target_id} -npl {minimal_NP_like_score}
 ```
-The resulting table will be placed in ./output_data/chembl/{target_id}\_np_like_min_{min_NPlike_score}.csv.
+The resulting table will be placed in **./output_data/chembl/{target_id}\_np_like_min_{min_NPlike_score}.csv**.
