@@ -182,13 +182,18 @@ gnps_file = os.listdir(os.path.join(path, '002_gnps', gnps_id, 'result_specnets_
 gnps_annotations_path = os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB', gnps_file)
 short_ik_smiles_query = {}
 try:
-    gnps_annotations = pd.read_csv(gnps_annotations_path, sep='\t', usecols=['Smiles', 'InChIKey-Planar'])
+    gnps_annotations = pd.read_csv(gnps_annotations_path, sep='\t', usecols=['Smiles', 'INCHI'])
+    #gnps_annotations.dropna(inplace=True, how='any')
     #print(f'GNPS job found with {len(gnps_annotations)} annotations')
     for _, row in gnps_annotations.iterrows():
-        mol = AllChem.MolFromSmiles(row["Smiles"])
+        if (not pd.isna(row["Smiles"])) & (row["Smiles"] != ' '):
+            mol = AllChem.MolFromSmiles(row["Smiles"])
+        elif not pd.isna(row["INCHI"]) :
+            mol = AllChem.MolFromInchi(row["INCHI"])
         if mol is not None:
             smiles =  AllChem.MolToSmiles(mol)
-            short_ik_smiles_query[row['InChIKey-Planar']] = smiles
+            ik_2D =  AllChem.MolToInchiKey(mol)[:14]
+            short_ik_smiles_query[ik_2D] = smiles
     metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
 except FileNotFoundError:
     pass
