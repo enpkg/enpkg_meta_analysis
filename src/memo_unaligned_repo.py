@@ -17,12 +17,12 @@ parser.add_argument('-p', '--sample_dir_path', required=True, help='The path to 
 parser.add_argument('--ionization', required=True, help="ionization mode to use to build the memo_matrix: pos, neg or both", type= str)
 parser.add_argument('--min_relative_intensity', help="Minimal relative intensity to keep a peak max_relative_intensity, default 0.01", type= float, default= 0.01)
 parser.add_argument('--max_relative_intensity', help="Maximal relative intensity to keep a peak max_relative_intensity, default 1", type= float, default= 1.0)
-parser.add_argument('--min_peaks_required', help="Minimum number of peaks to keep a spectrum losses_from, default 10", type= int, default= 10)
+parser.add_argument('--min_peaks_required', help="Minimum number of peaks to keep a spectrum, default 10", type= int, default= 10)
 parser.add_argument('--losses_from', help="Minimal m/z value for losses losses_to (int): maximal m/z value for losses, default 10", type= int, default= 10)
 parser.add_argument('--losses_to', help="Maximal m/z value for losses losses_to (int): maximal m/z value for losses, default 200", type= int, default= 200)
 parser.add_argument('--n_decimals', help="Number of decimal when translating peaks/losses into words, default 2", type= int, default= 2)
 parser.add_argument('--filter_blanks', help="Remove blanks samples from the MEMO matrix", type= bool, default= False)
-parser.add_argument('--word_max_occ_blanks', help="If word is present in more than n blanks, word is removed from MEMO matrix, default -1 (all words kept)", type= int, default= -1)
+parser.add_argument('--word_max_occ_blanks', help="Set --filter_blanks to True to use. If word is present in more than n blanks, word is removed from MEMO matrix, default -1 (all words kept)", type= int, default= -1)
 parser.add_argument('--output', required=True, help="Output name to use for the generated MEMO matrix", type= str)
 
 args = parser.parse_args()
@@ -39,6 +39,9 @@ elif ionization == 'both':
     pattern_to_match2 = '_features_ms2_neg.mgf'
 else:
     raise ValueError('ionization must be pos, neg or both')
+
+if (args.filter_blanks is False) & (args.word_max_occ_blanks != -1):
+    raise ValueError('Set --filter_blanks to True to use word_max_occ_blanks')
     
 i = 0        
 for (root, _, files) in os.walk(sample_dir_path, topdown=True):
@@ -64,6 +67,7 @@ if args.filter_blanks:
         else:
             if (metadata['sample_type'] == "blank").bool():
                 blanks.append(metadata['sample_id'].values[0])
+                blanks = list(set(blanks) & set(table.index))
     table_matched = table.loc[blanks]
     table_matched = table_matched.loc[:, (table_matched != 0).any(axis=0)]
     count_null = table_matched.replace(0, np.nan).isnull().sum()
@@ -107,6 +111,7 @@ if pattern_to_match2 is not None:
             else:
                 if (metadata['sample_type'] == "blank").bool():
                     blanks.append(metadata['sample_id'].values[0])
+                    blanks = list(set(blanks) & set(table.index))
         table_matched = table.loc[blanks]
         table_matched = table_matched.loc[:, (table_matched != 0).any(axis=0)]
         count_null = table_matched.replace(0, np.nan).isnull().sum()
