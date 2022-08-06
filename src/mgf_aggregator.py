@@ -56,6 +56,8 @@ for sample_directory in tqdm(samples_dir):
         metadata = pd.read_csv(metadata_file_path, sep='\t')
     except FileNotFoundError:
         continue
+    except NotADirectoryError:
+        continue
     if metadata['sample_type'][0] == 'sample':
         treated_samples.append(sample_directory)
         for spectrum in sample_spec:
