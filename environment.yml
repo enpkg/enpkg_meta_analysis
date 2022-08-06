@@ -15,6 +15,7 @@ dependencies:
   - rdkit
   - tqdm
   - matchms
+  - scikit-bio
   - pip
   - pip :
     - datatable
