@@ -72,7 +72,7 @@ To enrich our knowledge graph, we will fetch for dereplicated structures their W
 ### Worflow
 To do so, use the following command:
 ```console
-python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db
+python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db --gnps_job_id {gnps_job_id}
 ```
 ## 4. Fetching ChEMBL compounds with activity against a given target
 To enrich our knowledge graph, it is possible to include compounds from ChEMBL with activity against a target of interest. This could be fone using the ChEMBL KG itself, but it is unfortunately not available. Besides fetching compounds from ChEMBL, it is also possible to filter them according to their [NP likeliness](https://pubs.acs.org/doi/10.1021/ci700286x) score to remove synthetic compounds. 
