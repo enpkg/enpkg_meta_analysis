@@ -1,3 +1,4 @@
+from urllib.error import HTTPError
 import pandas as pd 
 from pandas import json_normalize
 import requests
@@ -14,7 +15,6 @@ from rdkit.Chem import AllChem
 
 p = Path(__file__).parents[1]
 os.chdir(p)
-print(p)
 
 """ Argument parser """
 
@@ -127,6 +127,7 @@ if os.path.exists(sql_path):
     cols = [column[0] for column in query.description]
     df_metadata = pd.DataFrame.from_records(data = query.fetchall(), columns = cols)
     short_ik_in_db = list(set(list(df_metadata['short_inchikey'])))
+    print(f'{len(short_ik_in_db)} short IK in DB')
     dat.close()
 else:
     short_ik_in_db = []
@@ -176,27 +177,28 @@ for directory in tqdm(samples_dir):
             metadata_short_ik[sik]['npc_class'] = row['structure_taxonomy_npclassifier_03class'].values[0]
 
 # Add unique IK from GNPS annotations
-print('Processing GNPS results')
+if gnps_id is not None:
+    print('Processing GNPS results')
 
-gnps_file = os.listdir(os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB'))[0]
-gnps_annotations_path = os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB', gnps_file)
-short_ik_smiles_query = {}
-try:
-    gnps_annotations = pd.read_csv(gnps_annotations_path, sep='\t', usecols=['Smiles', 'INCHI'])
-    #gnps_annotations.dropna(inplace=True, how='any')
-    #print(f'GNPS job found with {len(gnps_annotations)} annotations')
-    for _, row in gnps_annotations.iterrows():
-        if (not pd.isna(row["Smiles"])) & (row["Smiles"] != ' '):
-            mol = AllChem.MolFromSmiles(row["Smiles"])
-        elif not pd.isna(row["INCHI"]) :
-            mol = AllChem.MolFromInchi(row["INCHI"])
-        if mol is not None:
-            smiles =  AllChem.MolToSmiles(mol)
-            ik_2D =  AllChem.MolToInchiKey(mol)[:14]
-            short_ik_smiles_query[ik_2D] = smiles
-    metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
-except FileNotFoundError:
-    pass
+    gnps_file = os.listdir(os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB'))[0]
+    gnps_annotations_path = os.path.join(path, '002_gnps', gnps_id, 'result_specnets_DB', gnps_file)
+    short_ik_smiles_query = {}
+    try:
+        gnps_annotations = pd.read_csv(gnps_annotations_path, sep='\t', usecols=['Smiles', 'INCHI'])
+        #gnps_annotations.dropna(inplace=True, how='any')
+        #print(f'GNPS job found with {len(gnps_annotations)} annotations')
+        for _, row in gnps_annotations.iterrows():
+            if (not pd.isna(row["Smiles"])) & (row["Smiles"] != ' '):
+                mol = AllChem.MolFromSmiles(row["Smiles"])
+            elif not pd.isna(row["INCHI"]) :
+                mol = AllChem.MolFromInchi(row["INCHI"])
+            if mol is not None:
+                smiles =  AllChem.MolToSmiles(mol)
+                ik_2D =  AllChem.MolToInchiKey(mol)[:14]
+                short_ik_smiles_query[ik_2D] = smiles
+        metadata_short_ik = get_NPC(short_ik_smiles_query = short_ik_smiles_query, db_ik = short_ik_in_db, processed_ik = metadata_short_ik)
+    except FileNotFoundError:
+        pass
 
 # Add unique short IK from Sirius annotations + add NPC metadata
 print('Processing Sirius results')
@@ -240,7 +242,7 @@ df_ik_meta = pd.DataFrame.from_dict(metadata_short_ik, orient='index')\
     .reset_index().rename(columns={'index':'short_inchikey'}).fillna('unknown')
 
 print('Getting WD id and formatting results')
- 
+
 if len(df_ik_meta) > 0:
     wd_all = get_all_ik(wd_url)
     wd_all['short_inchikey'] = wd_all['inchikey'].str[:14]
