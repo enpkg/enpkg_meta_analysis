@@ -24,7 +24,7 @@ conda activate meta_analysis
 ## 1. Create a meta-Molecular Network using GNPS
 The meta-MN will be used to link features with similar fragmentation spectra among the different samples. In terms of GNPS workflow, it correspond to a classical MN. In our case, it is not a "real" classical MN because we performed feature detection and thus our potential isomers are separated.  
 
-### Worflow
+### Workflow
 First, we need to create a .mgf file that aggregated samples' individual .mgf files. To do so, run the following command:
 
 ```console
