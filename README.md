@@ -1,7 +1,7 @@
-# meta_analysis
+# enpkg_meta_analysis
 Analyses  to enrich the Experimental Natural Products Knowledge Graph.
 
-⚙️ Workflow part of [enpkg_workflow](https://github.com/mandelbrot-project/enpkg_workflow). First data have to be organized using [data_organization](https://github.com/mandelbrot-project/data_organization), taxonomy resolved using [taxo_enhancer](https://github.com/mandelbrot-project/taxo_enhancer) and spectra annotated using [indifiles_annotation](https://github.com/mandelbrot-project/indifiles_annotation) and/or [sirius_canopus](https://github.com/mandelbrot-project/sirius_canopus). 
+⚙️ Workflow part of [enpkg_workflow](https://github.com/enpkg_mn_isdb_taxo/enpkg_workflow). First data have to be organized using [enpkg_data_organization](https://github.com/enpkg/enpkg_data_organization), taxonomy resolved using [enpkg_taxo_enhancer](https://github.com/enpkg/enpkg_taxo_enhancer) and spectra annotated using [enpkg_mn_isdb_taxo](https://github.com/enpkg/enpkg_mn_isdb_taxo) and/or [enpkg_sirius_canopus](https://github.com/enpkg/enpkg_sirius_canopus). 
 
 Available meta-analyses:
 - Meta-MN (through GNPS): link spectra between spectra of unaligned samples.
