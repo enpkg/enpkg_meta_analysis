@@ -62,7 +62,7 @@ for sample_directory in tqdm(samples_dir):
         treated_samples.append(sample_directory)
         for spectrum in sample_spec:
             usi = 'mzspec:' + metadata['massive_id'][0] + ':' + metadata.sample_id[0] + '_features_ms2_'+ ionization + '.mgf:scan:' + str(spectrum.metadata['scans'])
-            original_feat_id = 'feature_' + usi 
+            original_feat_id = 'lcms_feature_' + usi 
             #original_feat_id = sample_directory + '_feature_' + spectrum.metadata['scans'] + '_' + ionization
             spectrum.set('original_feature_id', original_feat_id)
             spectrum.set('feature_id', i)
