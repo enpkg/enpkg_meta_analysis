@@ -112,8 +112,9 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
     return  processed_ik
     
 # These lines allows to make sure that we are placed at the repo directory level 
-p = Path(__file__).parents[2]
-os.chdir(p)
+
+sql_folder_path = os.path.join(os.getcwd() + '/output_data/sql_db/')
+Path(sql_folder_path).mkdir(parents=True, exist_ok=True)
 
 wd_url = 'https://query.wikidata.org/sparql'
 
@@ -145,10 +146,14 @@ for directory in tqdm(samples_dir):
             [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']]
     except FileNotFoundError:
         pass
+    except NotADirectoryError:
+        pass
     try:
         isdb_annotations_neg = pd.read_csv(isdb_path_neg, sep='\t')\
             [['short_inchikey','structure_smiles_2D', 'structure_taxonomy_npclassifier_01pathway', 'structure_taxonomy_npclassifier_02superclass', 'structure_taxonomy_npclassifier_03class']] 
     except FileNotFoundError:
+        pass
+    except NotADirectoryError:
         pass
         
     if (isdb_annotations_pos is not None) & (isdb_annotations_neg is not None):
@@ -213,11 +218,15 @@ for directory in tqdm(samples_dir):
             [['InChIkey2D','smiles']]
     except FileNotFoundError:
         pass
+    except NotADirectoryError:
+        pass
     try:
         sirius_annotations_neg = pd.read_csv(sirius_path_neg, sep='\t')\
             [['InChIkey2D','smiles']]
     except FileNotFoundError:
-        pass    
+        pass
+    except NotADirectoryError:
+        pass
 
     if (sirius_annotations_pos is not None) & (sirius_annotations_neg is not None):
         sirius_annotations = pd.concat([sirius_annotations_pos, sirius_annotations_neg])

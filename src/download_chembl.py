@@ -103,6 +103,8 @@ WHERE{
 from pathlib import Path
 p = Path(__file__).parents[1]
 os.chdir(p)
+sql_folder_path = os.path.join(os.getcwd() + '/output_data/chembl/')
+Path(sql_folder_path).mkdir(parents=True, exist_ok=True)
 
 # Download selected activities
 activities = new_client.activity
