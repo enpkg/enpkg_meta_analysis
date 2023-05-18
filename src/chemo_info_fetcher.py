@@ -111,8 +111,6 @@ def get_NPC(short_ik_smiles_query, db_ik, processed_ik, npc_api = "https://npcla
                 processed_ik[sik]['npc_class'] = 'unknown'
     return  processed_ik
     
-# These lines allows to make sure that we are placed at the repo directory level 
-
 sql_folder_path = os.path.join(os.getcwd() + '/output_data/sql_db/')
 Path(sql_folder_path).mkdir(parents=True, exist_ok=True)
 
@@ -167,9 +165,7 @@ for directory in tqdm(samples_dir):
         del(isdb_annotations_neg)
     else:
         continue
-    
-    #print(f'Processing ISDB results for sample {directory}')
-    
+        
     isdb_annotations.drop_duplicates(subset=['short_inchikey'], inplace=True)
     short_ik = list(isdb_annotations['short_inchikey'])    
     for sik in short_ik:
