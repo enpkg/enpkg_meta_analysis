@@ -28,7 +28,7 @@ To enrich our knowledge graph, we will fetch for dereplicated structures their W
 ### Worflow
 To do so, use the following command:
 ```console
-python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db --gnps_job_id {gnps_job_id}
+python .\src\chemo_info_fetcher.py -p path/to/your/data/directory/ --sql_name structures_metadata.db
 ```
 
 ## 2. MEMO analysis (optional)
