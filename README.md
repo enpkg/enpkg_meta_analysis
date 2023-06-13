@@ -1,4 +1,7 @@
 # enpkg_meta_analysis
+
+![release_badge](https://img.shields.io/github/v/release/enpkg/enpkg_meta_analysis)
+
 Analyses  to enrich the Experimental Natural Products Knowledge Graph.
 
 ⚙️ Workflow part of [enpkg_workflow](https://github.com/enpkg_mn_isdb_taxo/enpkg_workflow). First data have to be organized using [enpkg_data_organization](https://github.com/enpkg/enpkg_data_organization), taxonomy resolved using [enpkg_taxo_enhancer](https://github.com/enpkg/enpkg_taxo_enhancer) and spectra annotated using [enpkg_mn_isdb_taxo](https://github.com/enpkg/enpkg_mn_isdb_taxo) and/or [enpkg_sirius_canopus](https://github.com/enpkg/enpkg_sirius_canopus). 
