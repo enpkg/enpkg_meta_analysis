@@ -1,6 +1,7 @@
 # enpkg_meta_analysis
 
 ![release_badge](https://img.shields.io/github/v/release/enpkg/enpkg_meta_analysis)
+![license](https://img.shields.io/github/license/enpkg/enpkg_meta_analysis)
 
 Analyses  to enrich the Experimental Natural Products Knowledge Graph.
 
