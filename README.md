@@ -3,6 +3,10 @@
 ![release_badge](https://img.shields.io/github/v/release/enpkg/enpkg_meta_analysis)
 ![license](https://img.shields.io/github/license/enpkg/enpkg_meta_analysis)
 
+<p align="center">
+ <img src="https://github.com/enpkg/enpkg_workflow/blob/main/logo/enpkg_logo_full.png" width="200">
+</p>
+
 Analyses  to enrich the Experimental Natural Products Knowledge Graph.
 
 ⚙️ Module part of [enpkg_workflow](https://github.com/enpkg_mn_isdb_taxo/enpkg_workflow).  
