@@ -70,3 +70,11 @@ To do so, use the following command:
 python .\src\download_chembl.py -id {chembl_target_id} -npl {minimal_NP_like_score}
 ```
 The resulting table will be placed in **./output_data/chembl/{target_id}\_np_like_min_{min_NPlike_score}.csv**.
+
+## Citations
+If you use this ENPKG module, please cite:  
+- for MEMO:
+[Gaudry et al. 2022, Frontiers in Bioinformatics](https://www.frontiersin.org/articles/10.3389/fbinf.2022.842964/full)  
+- for ChEMBL:
+[Davies et al. 2015, Nucleic Acids Research](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4489243/)  
+
